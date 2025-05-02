@@ -4,8 +4,10 @@ import time
 import re
 from dotenv import load_dotenv
 import os
+import unicodedata
+import pandas as pd
 
-# Import ConversableAgent class
+# AUTOGEN IMPORTS
 import autogen
 from autogen import ConversableAgent, LLMConfig, Agent
 from autogen import AssistantAgent, UserProxyAgent, LLMConfig
@@ -15,45 +17,68 @@ from coding.constant import JOB_DEFINITION, RESPONSE_FORMAT
 # Load environment variables from .env file
 load_dotenv(override=True)
 
-# https://ai.google.dev/gemini-api/docs/pricing
-# URL configurations
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', None)
 OPEN_API_KEY = os.getenv('OPEN_API_KEY', None)
 
-placeholderstr = "Please input your command"
+# Clean UTF-8 unsafe characters
+def clean_text(text):
+    if text is None:
+        return ""
+    try:
+        return unicodedata.normalize("NFKD", text).encode("utf-8", "ignore").decode("utf-8", "ignore")
+    except:
+        return str(text).encode("utf-8", "ignore").decode("utf-8", "ignore")
+
+# UI 設定
+placeholderstr = "請輸入你會的技能（例如 Python）"
 user_name = "Gild"
 user_image = "https://www.w3schools.com/howto/img_avatar.png"
 
-seed = 42
-
+# 設定 LLM config
 llm_config_gemini = LLMConfig(
     api_type = "google", 
-    model="gemini-2.0-flash-lite",                    # The specific model
-    api_key=GEMINI_API_KEY,   # Authentication
+    model="gemini-2.0-flash-lite",
+    api_key=GEMINI_API_KEY,
 )
 
 llm_config_openai = LLMConfig(
     api_type = "openai", 
-    model="gpt-4o-mini",                    # The specific model
-    api_key=OPEN_API_KEY,   # Authentication
+    model="gpt-4o-mini",
+    api_key=OPEN_API_KEY,
 )
 
+# Agent 初始化
 with llm_config_gemini:
     student_agent = ConversableAgent(
         name="Student_Agent",
-        system_message="You are a student willing to learn.",
+        system_message="你是一位學生，想找適合你的實習職缺，請提供技能來獲得建議。",
     )
     teacher_agent = ConversableAgent(
         name="Teacher_Agent",
-        system_message="You are a math teacher.",
+        system_message=(
+            "你是一位實習職缺推薦老師。當學生提供技能（例如 Python），你需要從提供的職缺清單中找出相關職缺，並推薦給學生。"
+        )
     )
 
-user_proxy = UserProxyAgent(
-    "user_proxy",
-    human_input_mode="NEVER",
-    code_execution_config=False,
-    is_termination_msg=lambda x: content_str(x.get("content")).find("ALL DONE") >= 0,
-)
+# 讀入資料
+df = pd.read_csv('pages/jobsthousand.csv')
+
+def get_jobs_by_skill(skill):
+    matched = df[df["job_tags"].str.contains(skill, case=False, na=False)]
+    if matched.empty:
+        return "目前沒有符合該技能的職缺，請嘗試其他技能。"
+    return "\n".join([f"{row['comp_name']} - {row['job_name']}，技能需求：{row['job_tags']}" for _, row in matched.iterrows()])
+
+def generate_response(prompt):
+    job_info = get_jobs_by_skill(prompt)
+    message = f"以下是和 {prompt} 有關的實習職缺：\n{job_info}"
+    chat_result = student_agent.initiate_chat(
+        teacher_agent,
+        message = message,
+        summary_method="reflection_with_llm",
+        max_turns=2,
+    )
+    return chat_result.chat_history
 
 def stream_data(stream_str):
     for word in stream_str.split(" "):
@@ -76,26 +101,22 @@ def main():
             'Get Help': 'https://streamlit.io/',
             'Report a bug': 'https://github.com',
             'About': 'About your application: **Hello world**'
-            },
+        },
         page_icon="img/favicon.ico"
     )
 
-    # Show title and description.
     st.title(f"💬 {user_name}'s Chatbot")
 
     with st.sidebar:
         paging()
+        selected_lang = st.selectbox("Language", ["English", "繁體中文"], index=1, on_change=save_lang, key="language_select")
 
-        selected_lang = st.selectbox("Language", ["English", "繁體中文"], index=0, on_change=save_lang, key="language_select")
-        if 'lang_setting' in st.session_state:
-            lang_setting = st.session_state['lang_setting']
-        else:
-            lang_setting = selected_lang
-            st.session_state['lang_setting'] = lang_setting
+        lang_setting = st.session_state.get('lang_setting', selected_lang)
+        st.session_state['lang_setting'] = lang_setting
 
         st_c_1 = st.container(border=True)
         with st_c_1:
-            st.image("https://www.w3schools.com/howto/img_avatar.png")
+            st.image(user_image)
 
     st_c_chat = st.container(border=True)
 
@@ -103,68 +124,32 @@ def main():
         st.session_state.messages = []
     else:
         for msg in st.session_state.messages:
-            if msg["role"] == "user":
-                if user_image:
-                    st_c_chat.chat_message(msg["role"],avatar=user_image).markdown((msg["content"]))
-                else:
-                    st_c_chat.chat_message(msg["role"]).markdown((msg["content"]))
-            elif msg["role"] == "assistant":
-                st_c_chat.chat_message(msg["role"]).markdown((msg["content"]))
+            role = msg["role"]
+            content = clean_text(msg["content"])
+            if role == "user":
+                st_c_chat.chat_message(role, avatar=user_image).markdown(content)
+            elif role == "assistant":
+                st_c_chat.chat_message(role).markdown(content)
             else:
-                try:
-                    image_tmp = msg.get("image")
-                    if image_tmp:
-                        st_c_chat.chat_message(msg["role"],avatar=image_tmp).markdown((msg["content"]))
-                except:
-                    st_c_chat.chat_message(msg["role"]).markdown((msg["content"]))
+                image_tmp = msg.get("image")
+                if image_tmp:
+                    st_c_chat.chat_message(role, avatar=image_tmp).markdown(content)
+                else:
+                    st_c_chat.chat_message(role).markdown(content)
 
-
-    story_template = ("Give me a story started from '##PROMPT##'."
-                      f"And remeber to mention user's name {user_name} in the end."
-                      f"Please express in {lang_setting}")
-
-    classification_template = ("You are a classification agent, your job is to classify what ##PROMPT## is according to the job definition list in <JOB_DEFINITION>"
-    "<JOB_DEFINITION>"
-    f"{JOB_DEFINITION}"
-    "</JOB_DEFINITION>"
-    # "Please output in JSON-format only."
-    # "JSON-format is as below:"
-    # f"{RESPONSE_FORMAT}"
-    "Let's think step by step."
-    # f"Please output in {lang_setting}"
-    )
-
-    def generate_response(prompt):
-
-        chat_result = student_agent.initiate_chat(
-            teacher_agent,
-            message = prompt,
-            summary_method="reflection_with_llm",
-            max_turns=2,
-        )
-
-        response = chat_result.chat_history
-        return response
-
-    def show_chat_history(chat_hsitory):
-        for entry in chat_hsitory:
+    def show_chat_history(chat_history):
+        for entry in chat_history:
             role = entry.get('role')
-            name = entry.get('name')
-            content = entry.get('content')
-            st.session_state.messages.append({"role": f"{role}", "content": content})
-
+            content = clean_text(entry.get('content'))
+            st.session_state.messages.append({"role": role, "content": content})
             if len(content.strip()) != 0: 
                 if 'ALL DONE' in content:
                     return 
-                else: 
-                    if role != 'assistant':
-                        st_c_chat.chat_message(f"{role}").write((content))
-                    else:
-                        st_c_chat.chat_message("user",avatar=user_image).write(content)
-    
-        return 
+                if role != 'assistant':
+                    st_c_chat.chat_message(role).write(content)
+                else:
+                    st_c_chat.chat_message("user", avatar=user_image).write(content)
 
-    # Chat function section (timing included inside function)
     def chat(prompt: str):
         response = generate_response(prompt)
         show_chat_history(response)
