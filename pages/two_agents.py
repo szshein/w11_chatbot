@@ -31,7 +31,7 @@ def clean_text(text):
 
 # UI 設定
 placeholderstr = "請輸入你會的技能（例如 Python）"
-user_name = "Gild"
+user_name = "Melody"
 user_image = "https://www.w3schools.com/howto/img_avatar.png"
 
 # 設定 LLM config
@@ -60,8 +60,9 @@ with llm_config_gemini:
         )
     )
 
+
 # 讀入資料
-df = pd.read_csv('pages/jobsthousand.csv')
+df = pd.read_csv('pages/jobsthousands.csv')
 
 def get_jobs_by_skill(skill):
     matched = df[df["job_tags"].str.contains(skill, case=False, na=False)]
