@@ -12,19 +12,31 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from autogen import AssistantAgent, LLMConfig
 from tqdm import tqdm
 
-# ----------------------------- 基本設定 --------------------------------------
-PAGE_TITLE = "🧹Job Cleaner"
-st.set_page_config(page_title=PAGE_TITLE, layout="wide", page_icon="🧹")
-st.title(PAGE_TITLE)
-
 def paging():
     st.page_link("streamlit_app.py", label="Home", icon="🏠")
     st.page_link("pages/two_agents.py", label="Two Agents' Talk", icon="💭")
     st.page_link("pages/job_cleaner.py", label="Job Cleaner", icon="🧹")
 
-with st.sidebar:
-    paging()
+def save_lang():
+    st.session_state['lang_setting'] = st.session_state.get("language_select")
 
+user_image = "https://www.w3schools.com/howto/img_avatar.png"
+# ----------------------------- 基本設定 --------------------------------------
+PAGE_TITLE = "🧹Job Cleaner"
+st.set_page_config(page_title=PAGE_TITLE, layout="wide", page_icon="🧹")
+st.title(PAGE_TITLE)
+
+with st.sidebar:
+        paging()
+        selected_lang = st.selectbox("Language", ["English", "繁體中文"], index=1, on_change=save_lang, key="language_select")
+
+        lang_setting = st.session_state.get('lang_setting', selected_lang)
+        st.session_state['lang_setting'] = lang_setting
+
+        st_c_1 = st.container(border=True)
+        with st_c_1:
+            st.image(user_image)
+            
 load_dotenv(override=True)
 API_KEY = os.getenv("GEMINI_API_KEY")
 
