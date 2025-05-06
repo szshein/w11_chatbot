@@ -18,7 +18,7 @@ from coding.constant import JOB_DEFINITION, RESPONSE_FORMAT
 load_dotenv(override=True)
 
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', None)
-OPEN_API_KEY = os.getenv('OPEN_API_KEY', None)
+GEMINI_API_KEY_2 = os.getenv('OPEN_API_KEY', None)
 
 # Clean UTF-8 unsafe characters
 def clean_text(text):
@@ -41,10 +41,10 @@ llm_config_gemini = LLMConfig(
     api_key=GEMINI_API_KEY,
 )
 
-llm_config_openai = LLMConfig(
-    api_type = "openai", 
-    model="gpt-4o-mini",
-    api_key=OPEN_API_KEY,
+llm_config_gemini_2 = LLMConfig(
+    api_type = "google", 
+    model="gemini-2.0-flash-lite",
+    api_key=GEMINI_API_KEY_2,
 )
 
 # Agent 初始化
@@ -107,7 +107,7 @@ def main():
         page_icon="img/favicon.ico"
     )
 
-    st.title(f"💬 {user_name}'s Chatbot")
+    st.title(f"💬 Two Agent's Talk")
 
     with st.sidebar:
         paging()

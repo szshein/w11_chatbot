@@ -19,10 +19,10 @@ load_dotenv(override=True)
 # https://ai.google.dev/gemini-api/docs/pricing
 # URL configurations
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', None)
-OPEN_API_KEY = os.getenv('OPEN_API_KEY', None)
+GEMINI_API_KEY_2 = os.getenv('OPEN_API_KEY', None)
 
-placeholderstr = "Please input your command"
-user_name = "Gild"
+placeholderstr = "Input anything you want"
+user_name = "Group7"
 user_image = "https://www.w3schools.com/howto/img_avatar.png"
 
 seed = 42
@@ -33,10 +33,10 @@ llm_config_gemini = LLMConfig(
     api_key=GEMINI_API_KEY,   # Authentication
 )
 
-llm_config_openai = LLMConfig(
-    api_type = "openai", 
-    model="gpt-4o-mini",                    # The specific model
-    api_key=OPEN_API_KEY,   # Authentication
+llm_config_gemini_2 = LLMConfig(
+    api_type = "google", 
+    model="gemini-2.0-flash-lite",                    # The specific model
+    api_key=GEMINI_API_KEY_2,   # Authentication
 )
 
 with llm_config_gemini:
