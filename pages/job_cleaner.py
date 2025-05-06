@@ -17,6 +17,14 @@ PAGE_TITLE = "🧹Job Cleaner"
 st.set_page_config(page_title=PAGE_TITLE, layout="wide", page_icon="🧹")
 st.title(PAGE_TITLE)
 
+def paging():
+    st.page_link("streamlit_app.py", label="Home", icon="🏠")
+    st.page_link("pages/two_agents.py", label="Two Agents' Talk", icon="💭")
+    st.page_link("pages/job_cleaner.py", label="Job Cleaner", icon="🧹")
+
+with st.sidebar:
+    paging()
+
 load_dotenv(override=True)
 API_KEY = os.getenv("GEMINI_API_KEY")
 
