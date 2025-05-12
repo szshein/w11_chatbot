@@ -10,7 +10,7 @@ from autogen import ConversableAgent, LLMConfig
 from autogen import AssistantAgent, UserProxyAgent, LLMConfig
 from autogen.code_utils import content_str
 from coding.constant import JOB_DEFINITION, RESPONSE_FORMAT
-
+from coding.utils import paging
 import streamlit as st
 
 # Load environment variables from .env file
@@ -66,12 +66,6 @@ def stream_data(stream_str):
 
 def save_lang():
     st.session_state['lang_setting'] = st.session_state.get("language_select")
-
-def paging():
-    st.page_link("streamlit_app.py", label="Home", icon="🏠")
-    st.page_link("pages/two_agents.py", label="Two Agents' Talk", icon="💭")
-    st.page_link("pages/job_cleaner.py", label="Job Cleaner", icon= "🧹")
-    st.page_link("pages/world_cloud.py", label="World Cloud", icon= "☁️")
 
 def main():
     st.set_page_config(

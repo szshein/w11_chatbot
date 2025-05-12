@@ -1,5 +1,3 @@
-# pages/job_cleaner.py
-# -*- coding: utf-8 -*-
 """
 🧹Job Cleaner - 讀入職缺CSV，從職缺描述擷取出「工作內容」，匯出
 """
@@ -11,21 +9,17 @@ from dotenv import load_dotenv
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from autogen import AssistantAgent, LLMConfig
 from tqdm import tqdm
+from coding.utils import paging
 
-def paging():
-    st.page_link("streamlit_app.py", label="Home", icon="🏠")
-    st.page_link("pages/two_agents.py", label="Two Agents' Talk", icon="💭")
-    st.page_link("pages/job_cleaner.py", label="Job Cleaner", icon="🧹")
-
+# --- page setting ---
 def save_lang():
     st.session_state['lang_setting'] = st.session_state.get("language_select")
 
-user_image = "https://www.w3schools.com/howto/img_avatar.png"
-# ----------------------------- 基本設定 --------------------------------------
 PAGE_TITLE = "🧹Job Cleaner"
 st.set_page_config(page_title=PAGE_TITLE, layout="wide", page_icon="🧹")
 st.title(PAGE_TITLE)
 
+user_image = "https://www.w3schools.com/howto/img_avatar.png"
 with st.sidebar:
         paging()
         selected_lang = st.selectbox("Language", ["English", "繁體中文"], index=1, on_change=save_lang, key="language_select")
