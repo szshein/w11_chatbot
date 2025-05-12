@@ -27,7 +27,7 @@ if len(content) == 0:
 text = content[0]
 
 # --- generate ---
-font_path = "/workspaces/w11_chatbot/msyh.ttc"  
+font_path = "msyh.ttc"  
 wc = WordCloud(
     font_path=font_path,
     width=800,
