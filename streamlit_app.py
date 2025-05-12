@@ -71,6 +71,7 @@ def paging():
     st.page_link("streamlit_app.py", label="Home", icon="🏠")
     st.page_link("pages/two_agents.py", label="Two Agents' Talk", icon="💭")
     st.page_link("pages/job_cleaner.py", label="Job Cleaner", icon= "🧹")
+    st.page_link("pages/world_cloud.py", label="World Cloud", icon= "☁️")
 
 def main():
     st.set_page_config(
