@@ -90,7 +90,7 @@ def main():
     )
 
     # Show title and description.
-    st.title(f"👩‍💼 Teacher Agent's Talk")
+    st.title(f"👩‍💼 Internship Navigator")
 
     with st.sidebar:
         paging()

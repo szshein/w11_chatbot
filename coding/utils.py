@@ -6,10 +6,10 @@ from datetime import datetime
 
 def paging():
     st.page_link("streamlit_app.py", label="Home", icon="🏠")
-    st.page_link("pages/two_agents.py", label="Two Agents' Talk", icon="👩‍💼")
+    st.page_link("pages/teacher_agent.py", label="Internship Navigator", icon= "👩‍💼")
     st.page_link("pages/job_cleaner.py", label="Job Cleaner", icon= "🧹")
     st.page_link("pages/world_cloud.py", label="World Cloud", icon= "☁️")
-    st.page_link("pages/teacher_agent.py", label="Teacher Agent's Talk", icon= "👩‍💼")
+    st.page_link("pages/two_agents.py", label="Two Agents' Talk", icon="👩‍💼")
 
 
 def display_session_msg(container_obj, user_image: Optional[str] = None):
