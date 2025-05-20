@@ -41,16 +41,12 @@ def crawl_104_jobs(pages=10):
 
         time.sleep(2)
 
-    return all_jobs
-
-def save_jobs_to_csv(jobs, filename='pages/104_jobs.csv'):
     if not os.path.exists('pages'):
         os.makedirs('pages')
 
     df = pd.DataFrame(jobs)
-    df.to_csv(filename, index=False, encoding="utf-8-sig")
-    print(f"📁 已儲存 {len(jobs)} 筆職缺資料到 {filename}")
+    df.to_csv('pages/104_intern.csv', index=False, encoding='utf-8-sig')
+    print(f"📁 已儲存 {len(jobs)} 筆職缺資料")
 
 if __name__ == "__main__":
     job_list = crawl_104_jobs(10)
-    save_jobs_to_csv(job_list)
