@@ -44,7 +44,7 @@ def crawl_104_jobs(pages=10):
     if not os.path.exists('pages'):
         os.makedirs('pages')
 
-    df = pd.DataFrame(jobs)
+    df = pd.DataFrame(all_jobs)
     df.to_csv('pages/104_intern.csv', index=False, encoding='utf-8-sig')
     print(f"📁 已儲存 {len(jobs)} 筆職缺資料")
 
