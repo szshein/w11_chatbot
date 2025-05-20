@@ -25,6 +25,7 @@ jobs:
     - name: Run scraper
       run: |
         python job_scrape.py
+        python job_scrape_104.py
 
     - name: Commit and push CSV
       run: |
