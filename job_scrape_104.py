@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import time
 
-def crawl_104_jobs(pages=60):
+def crawl_104_jobs(pages=10):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36',
         'Referer': 'https://www.104.com.tw/jobs/search/',
@@ -52,5 +52,5 @@ def save_jobs_to_csv(jobs, filename='pages/104_jobs.csv'):
     print(f"📁 已儲存 {len(jobs)} 筆職缺資料到 {filename}")
 
 if __name__ == "__main__":
-    job_list = crawl_104_jobs(pages=5)  # 你可以改成 pages=60
+    job_list = crawl_104_jobs(10)
     save_jobs_to_csv(job_list)
