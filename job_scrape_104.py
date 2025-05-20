@@ -49,4 +49,4 @@ def crawl_104_jobs(pages=10):
     print(f"📁 已儲存 {len(jobs)} 筆職缺資料")
 
 if __name__ == "__main__":
-    job_list = crawl_104_jobs(10)
+    crawl_104_jobs(10)
