@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import time
 
-def crawl_104_jobs():
+def crawl_104_jobs(pages=60):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36',
         'Referer': 'https://www.104.com.tw/jobs/search/',
@@ -12,18 +12,15 @@ def crawl_104_jobs():
     }
 
     url = "https://www.104.com.tw/jobs/search/list"
-
     all_jobs = []
 
-    for page in range(1, 61):
+    for page in range(1, pages + 1):
         params = {
             "ro": 0,  # 全職、兼職、實習都要
             "keyword": "實習",
-            # "area": "6001001000",  # 台北
-            # "isnew": 1,
             "mode": "l",
             "order": 11,  # 最新排序
-            "asc": 0,  # 降序
+            "asc": 0,     # 降序
             "page": page
         }
 
@@ -32,11 +29,11 @@ def crawl_104_jobs():
             if resp.status_code == 200:
                 data = resp.json()
                 jobs = data.get('data', {}).get('list', [])
-                if not jobs:  # 如果沒有職缺，可能到最後一頁，提前結束
+                if not jobs:
                     print(f"第 {page} 頁無職缺，結束爬取")
                     break
                 all_jobs.extend(jobs)
-                print(f"成功爬取第 {page} 頁，共獲得 {len(jobs)} 筆職缺")
+                print(f"✅ 成功爬取第 {page} 頁，共獲得 {len(jobs)} 筆職缺")
             else:
                 print(f"❌ 第 {page} 頁請求失敗，狀態碼：{resp.status_code}")
         except Exception as e:
@@ -52,8 +49,8 @@ def save_jobs_to_csv(jobs, filename='pages/104_jobs.csv'):
 
     df = pd.DataFrame(jobs)
     df.to_csv(filename, index=False, encoding="utf-8-sig")
-    print(f"已儲存 {len(jobs)} 筆職缺資料到 {filename}")
+    print(f"📁 已儲存 {len(jobs)} 筆職缺資料到 {filename}")
 
 if __name__ == "__main__":
-    job_list = crawl_104_jobs(pages=5)
+    job_list = crawl_104_jobs(pages=5)  # 你可以改成 pages=60
     save_jobs_to_csv(job_list)
