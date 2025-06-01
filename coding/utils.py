@@ -10,6 +10,8 @@ def paging():
     st.page_link("pages/job_cleaner.py", label="Job Cleaner", icon= "🧹")
     st.page_link("pages/world_cloud.py", label="World Cloud", icon= "☁️")
     st.page_link("pages/two_agents.py", label="Two Agents' Talk", icon="👩‍💼")
+    st.page_link("pages/textmining.py", label="實習類型探索｜文字雲 × 技能圖", icon="📊")
+    
 
 
 def display_session_msg(container_obj, user_image: Optional[str] = None):
