@@ -6,11 +6,12 @@ from datetime import datetime
 
 def paging():
     st.page_link("streamlit_app.py", label="Home", icon="🏠")
+    st.page_link("pages/internship.py", label="實習職缺導航", icon="📊")
+    st.page_link("pages/textmining.py", label="實習類型探索｜文字雲 × 技能圖", icon="📊")
     st.page_link("pages/teacher_agent.py", label="Internship Navigator", icon= "👩‍💼")
     st.page_link("pages/job_cleaner.py", label="Job Cleaner", icon= "🧹")
     st.page_link("pages/world_cloud.py", label="World Cloud", icon= "☁️")
     st.page_link("pages/two_agents.py", label="Two Agents' Talk", icon="👩‍💼")
-    st.page_link("pages/textmining.py", label="實習類型探索｜文字雲 × 技能圖", icon="📊")
     
 
 

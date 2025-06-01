@@ -7,3 +7,4 @@ ag2[openai]
 beautifulsoup4
 wordcloud
 matplotlib
+streamlit-aggrid
